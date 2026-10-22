@@ -3,6 +3,7 @@ import "./styles.css";
 
 const textarea = document.getElementById("input");
 const results = document.getElementById("results");
+const analyzeBtn = document.getElementById("analyze-btn");
 
 function escapeHtml(text) {
   const div = document.createElement("div");
@@ -10,23 +11,20 @@ function escapeHtml(text) {
   return div.innerHTML;
 }
 
-function updateResults() {
-  const text = textarea.value;
+function analyzeText() {
+  const text = textarea.value.trim();
 
-  if (!text.trim()) {
+  if (!text) {
     results.innerHTML =
-      "<p class='empty'>Enter text above to begin.</p>";
+      "<p class='empty'>Please enter some text.</p>";
     return;
   }
 
   const suggestions = writeGood(text);
 
   if (suggestions.length === 0) {
-    results.innerHTML = `
-      <div class="success">
-        ✅ No issues detected
-      </div>
-    `;
+    results.innerHTML =
+      "<div class='success'>✅ No issues detected.</div>";
     return;
   }
 
@@ -34,23 +32,13 @@ function updateResults() {
     .map(
       (item) => `
         <div class="suggestion">
-          <div class="reason">
-            ${escapeHtml(item.reason)}
-          </div>
-
-          <div class="match">
-            <strong>Matched:</strong>
-            ${escapeHtml(item.match)}
-          </div>
-
-          <div class="position">
-            <strong>Position:</strong>
-            ${item.index}
-          </div>
+          <div class="reason">${escapeHtml(item.reason)}</div>
+          <div><strong>Matched:</strong> ${escapeHtml(item.match)}</div>
+          <div><strong>Position:</strong> ${item.index}</div>
         </div>
       `
     )
     .join("");
 }
 
-textarea.addEventListener("input", updateResults);
+analyzeBtn.addEventListener("click", analyzeText);
